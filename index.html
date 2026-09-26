@@ -1,0 +1,291 @@
+<!doctype html>
+  <html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FreshFold Laundry POS</title>
+  <style>
+  :root{--blue:#1f6feb;--blue2:#eaf3ff;--green:#1fa463;--green2:#e7f7ee;--red:#d94b59;--red2:#fff0f1;--ink:#17324d;--muted:#6c8092;--line:#dce7f1;--bg:#f4f8fc;--white:#fff;--shadow:0 10px 28px rgba(31,78,121,.08)}
+  *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:flex}.sidebar{width:250px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh}.brand{display:flex;gap:11px;align-items:center;margin-bottom:26px}.brand-mark{width:42px;height:42px;border-radius:12px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800}.brand h1{font-size:17px;margin:0}.brand span{font-size:11px;color:var(--muted)}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;text-align:left;padding:12px 13px;border-radius:10px;color:#5c7288;font-weight:700}.nav button.active,.nav button:hover{background:var(--blue2);color:var(--blue)}.sidebar-card{margin-top:28px;padding:14px;border:1px solid #cfe8da;background:linear-gradient(160deg,#eef9f3,#f9fcfa);border-radius:15px}.sidebar-card strong{font-size:13px}.sidebar-card p{margin:6px 0 0;font-size:11px;line-height:1.5;color:#668071}.main{flex:1;padding:28px;min-width:0}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:20px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--green);font-weight:800}.topbar h2{margin:4px 0;font-size:28px}.topbar p{margin:0;color:var(--muted)}.primary,.secondary,.danger{border-radius:10px;padding:10px 14px;font-weight:800}.primary{border:0;background:var(--blue);color:#fff}.primary:hover{background:#1557b0}.secondary{border:1px solid var(--line);background:#fff;color:var(--ink)}.danger{border:1px solid #efcbd0;background:var(--red2);color:var(--red)}.view{display:block}.hidden{display:none!important}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}.metric small{display:block;color:var(--muted);margin-bottom:8px}.metric .value{font-size:25px;font-weight:850}.metric .sub{font-size:11px;color:var(--muted);margin-top:4px}.chart-card{margin-bottom:16px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.section-head h3{margin:0;font-size:17px}.section-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.chart{height:320px;position:relative}.chart canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px}.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.legend .income:before{background:var(--blue)}.legend .expense:before{background:var(--red)}.legend .profit:before{background:var(--green)}.filterbar{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;background:#f7faff;border:1px solid #e0ebf5;padding:12px;border-radius:12px;margin-bottom:12px}.field label{display:block;font-size:11px;font-weight:800;color:#587089;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:#8dbaf6;box-shadow:0 0 0 3px #edf5ff}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:11px;border-bottom:1px solid #edf2f7;text-align:left;white-space:nowrap}.table th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.pill{display:inline-block;padding:4px 7px;border-radius:999px;background:var(--blue2);color:var(--blue);font-size:10px;font-weight:800}.pill.red{background:var(--red2);color:var(--red)}.pill.green{background:var(--green2);color:var(--green)}.delete{border:0;background:var(--red2);color:var(--red);border-radius:8px;padding:6px 8px;font-weight:800;font-size:11px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .full{grid-column:span 2}.form-actions{margin-top:12px;display:flex;justify-content:flex-end;gap:8px}.form-note{font-size:11px;color:var(--muted);margin-top:8px}.summary-bar{display:flex;gap:18px;flex-wrap:wrap;padding:12px 14px;border:1px solid #dbe9f5;background:#fbfdff;border-radius:11px;margin-bottom:12px}.summary-bar strong{font-size:15px}.summary-bar span{color:var(--muted);font-size:11px;margin-right:5px}.empty{text-align:center;color:var(--muted);padding:26px}.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px}.sale-popover{position:fixed;top:84px;right:28px;width:min(440px,calc(100vw - 32px));z-index:30;pointer-events:none}.sale-popover:not(.hidden){pointer-events:auto}.sale-popover .modal-box{background:#fff;border:1px solid #cfe0ee;border-radius:18px;padding:20px;box-shadow:0 22px 55px rgba(23,50,77,.18);transform:translateY(-8px) scale(.98);opacity:0;transition:transform .16s ease,opacity .16s ease}.sale-popover:not(.hidden) .modal-box{transform:translateY(0) scale(1);opacity:1}.modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.modal-top .eyebrow{margin-bottom:2px}.modal-box h3{margin:2px 0 4px}.modal-box p{margin:0 0 16px;font-size:12px;color:var(--muted)}.icon-close{width:34px;height:34px;border:1px solid var(--line);background:#f7faff;color:var(--ink);border-radius:9px;font-size:22px;line-height:1}.icon-close:hover{background:var(--blue2);color:var(--blue)}
+  @media(max-width:1050px){.cards{grid-template-columns:repeat(2,1fr)}.filterbar{grid-template-columns:1fr 1fr}.filterbar .actions{grid-column:span 2}}@media(max-width:720px){.app{display:block}.sidebar{width:auto;height:auto;position:relative;padding:14px}.nav{grid-template-columns:repeat(3,1fr)}.sidebar-card{display:none}.main{padding:16px}.topbar{flex-direction:column}.top-actions{width:100%}.primary,.secondary{flex:1}.cards{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}@media(max-width:520px){.cards{grid-template-columns:1fr}.nav{grid-template-columns:1fr 1fr 1fr}.filterbar{grid-template-columns:1fr}.filterbar .actions{grid-column:auto}}
+  .section-actions{display:flex;gap:8px;flex-wrap:wrap}.expense-toolbar{margin-bottom:16px}.expense-inline-summary{display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.expense-inline-summary strong{color:var(--ink)}
+  .record-row{cursor:pointer;transition:background .15s ease,box-shadow .15s ease}.record-row:hover,.record-row.hovered,.record-row:focus{background:#f7fbff;box-shadow:inset 3px 0 0 var(--blue);outline:none}.record-row td:first-child{font-weight:700}
+  .expense-popover,.detail-popover{position:fixed;z-index:35}.expense-popover{top:84px;right:28px;width:min(480px,calc(100vw - 32px));pointer-events:none}.expense-popover:not(.hidden),.detail-popover:not(.hidden){pointer-events:auto}.expense-popover .modal-box{background:#fff;border:1px solid #cfe0ee;border-radius:18px;padding:20px;box-shadow:0 22px 55px rgba(23,50,77,.18);transform:translateY(-8px) scale(.98);opacity:0;transition:transform .16s ease,opacity .16s ease}.expense-popover:not(.hidden) .modal-box{transform:translateY(0) scale(1);opacity:1}
+  .detail-popover{left:16px;top:16px;width:min(340px,calc(100vw - 32px));pointer-events:none}.detail-box{background:#fff;border:1px solid #cfe0ee;border-radius:16px;padding:17px;box-shadow:0 18px 44px rgba(23,50,77,.18);transform:translateY(-6px);opacity:0;transition:transform .15s ease,opacity .15s ease}.detail-popover:not(.hidden) .detail-box{transform:translateY(0);opacity:1}.detail-grid{display:grid;gap:8px;margin-top:8px}.detail-item{display:flex;justify-content:space-between;gap:15px;padding:10px 11px;border-radius:10px;background:#f7faff;border:1px solid #e8eef5}.detail-item span{font-size:11px;color:var(--muted)}.detail-item strong{font-size:12px;text-align:right}
+  @media(max-width:720px){.section-actions{width:100%}.section-actions .primary,.section-actions .secondary{flex:1}.detail-popover{width:min(360px,calc(100vw - 32px))}}
+
+  </style>
+
+  </head>
+  <body>
+  <div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">FF</div><div><h1>FreshFold Laundry</h1><span>Simple daily POS</span></div></div>
+    <div class="nav">
+      <button class="active" data-view="dashboard">Dashboard</button>
+      <button data-view="sales">Total Sales</button>
+      <button data-view="expenses">Expenses</button>
+    </div>
+    <div class="sidebar-card"><strong>Owner workflow</strong><p>Record one total sales amount for each day. Add operating expenses separately. The dashboard summarizes both.</p><div class="xml-note">Sample records are embedded in this single HTML file.</div></div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div><div class="eyebrow">Laundry service POS</div><h2 id="pageTitle">Dashboard</h2><p id="pageSubtitle">Income, expenses and profit at a glance.</p></div>
+    </div>
+
+    <section id="dashboard" class="view">
+      <div class="cards">
+        <div class="card metric"><small>Total income</small><div class="value" id="dashIncome">₱0.00</div><div class="sub" id="dashIncomeSub">All recorded sales</div></div>
+        <div class="card metric"><small>Total expenses</small><div class="value" id="dashExpense">₱0.00</div><div class="sub">All recorded expenses</div></div>
+        <div class="card metric"><small>Net profit</small><div class="value" id="dashProfit">₱0.00</div><div class="sub">Income less expenses</div></div>
+        <div class="card metric"><small>Active sales days</small><div class="value" id="dashDays">0</div><div class="sub" id="dashBestDay">No sales yet</div></div>
+      </div>
+      <div class="card chart-card">
+        <div class="section-head"><div><h3>Income, expenses & profit</h3><p>Daily trend from recorded business data.</p></div><div class="legend"><span class="income">Income</span><span class="expense">Expenses</span><span class="profit">Profit</span></div></div>
+        <div class="chart"><canvas id="dashboardChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><div><h3>Business records</h3><p>Hover or click a row to preview the record details.</p></div><div class="section-actions"><button class="secondary" id="dashboardExpenseAdd">+ Add expense</button><button class="primary" id="dashboardAdd">+ Add daily sale</button></div></div>
+        <div class="filterbar">
+          <div class="field"><label for="dashType">Type</label><select id="dashType"><option value="all">All records</option><option value="sale">Sales only</option><option value="expense">Expenses only</option></select></div>
+          <div class="field"><label for="dashPeriod">Date filter</label><select id="dashPeriod"><option value="all">All dates</option><option value="week">Week of selected date</option><option value="month">Month of selected date</option></select></div>
+          <div class="field"><label for="dashMonth">Select a date</label><input id="dashMonth" type="date"></div>
+        </div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Record</th><th>Details</th><th>Amount</th><th></th></tr></thead><tbody id="dashTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="sales" class="view hidden">
+      <div class="card chart-card">
+        <div class="section-head"><div><h3>Daily sales income</h3><p>Each row is the total sales collected for one day.</p></div></div>
+        <div class="filterbar">
+          <div class="field"><label for="salesPeriod">Income period</label><select id="salesPeriod"><option value="all">All dates</option><option value="week">Week of selected date</option><option value="month">Month of selected date</option></select></div>
+          <div class="field"><label for="salesMonth">Select a date</label><input id="salesMonth" type="date"></div>
+          <div class="field"><label>Period total</label><input id="salesPeriodTotal" value="₱0.00" readonly></div>
+        </div>
+        <div class="summary-bar"><div><span>Weekly total</span><strong id="weeklyTotal">₱0.00</strong></div><div><span>Monthly total</span><strong id="monthlyTotal">₱0.00</strong></div><div><span>Selected period</span><strong id="selectedPeriodLabel">All dates</strong></div></div>
+        <div class="chart"><canvas id="salesChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><div><h3>Daily sales table</h3><p>Most recent daily totals appear first.</p></div><button class="primary" id="salesAdd">+ Add daily sale</button></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Daily sales</th><th></th></tr></thead><tbody id="salesTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="expenses" class="view hidden">
+      <div class="card expense-toolbar">
+        <div class="section-head"><div><h3>Expense history</h3><p>Use the button to open the quick-entry panel for a new expense.</p></div><button class="primary" id="expensePageAdd">+ Add expense</button></div>
+        <div class="expense-inline-summary"><span>Entries: <strong id="expenseCount">0</strong></span><span>Total expenses: <strong id="expenseTotal">₱0.00</strong></span></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><div><h3>Expense records</h3><p>Hover or click a row to preview the expense details.</p></div></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody id="expenseTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <div class="footer">Data is stored in this browser. Prototype data is loaded automatically when no saved records are present.</div>
+  </main>
+  </div>
+
+  <script id="sampleXmlData" type="application/xml"><freshfoldData version="1.0"><sales>
+    <sale id="s1" date="2026-09-21" amount="2480" />
+    <sale id="s2" date="2026-09-22" amount="3120" />
+    <sale id="s3" date="2026-09-23" amount="2760" />
+    <sale id="s4" date="2026-09-24" amount="3540" />
+    <sale id="s5" date="2026-09-25" amount="2980" />
+    <sale id="s6" date="2026-09-26" amount="2210" />
+    <sale id="s7" date="2026-09-13" amount="1860" />
+    <sale id="s8" date="2026-09-14" amount="2040" />
+  </sales><expenses>
+    <expense id="e1" date="2026-09-22" category="Detergent &amp; supplies" description="Weekly detergent restock" amount="650" />
+    <expense id="e2" date="2026-09-24" category="Utilities" description="Electricity bill" amount="1180" />
+    <expense id="e3" date="2026-09-25" category="Others" description="Small maintenance item" amount="240" />
+    <expense id="e4" date="2026-09-26" category="Payroll" description="Part-time staff allowance" amount="520" />
+  </expenses></freshfoldData></script>
+
+  <div class="sale-popover hidden" id="saleModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="false" aria-labelledby="saleModalTitle">
+      <div class="modal-top">
+        <div><span class="eyebrow">Quick entry</span><h3 id="saleModalTitle">Add daily sales</h3></div>
+        <button type="button" class="icon-close" id="closeSale" aria-label="Close">×</button>
+      </div>
+      <p>Enter the total amount collected for the chosen day. Adding a date that already exists updates that day’s total.</p>
+      <form id="saleForm">
+        <div class="form-grid">
+          <div class="field"><label for="saleDate">Date</label><input id="saleDate" type="date" required></div>
+          <div class="field"><label for="saleAmount">Total sales (₱)</label><input id="saleAmount" type="number" min="0" step="0.01" required></div>
+        </div>
+        <div class="form-actions"><button type="button" class="secondary" id="cancelSale">Cancel</button><button type="submit" class="primary">Save daily sale</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="expense-popover hidden" id="expenseModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="false" aria-labelledby="expenseModalTitle">
+      <div class="modal-top">
+        <div><span class="eyebrow">Quick entry</span><h3 id="expenseModalTitle">Add expense</h3></div>
+        <button type="button" class="icon-close" id="closeExpense" aria-label="Close">×</button>
+      </div>
+      <p>Record one operating expense. Use the fixed categories to keep reports consistent.</p>
+      <form id="expenseForm">
+        <div class="form-grid">
+          <div class="field"><label for="expenseDate">Date</label><input id="expenseDate" type="date" required></div>
+          <div class="field"><label for="expenseCategory">Category</label><select id="expenseCategory"><option>Detergent &amp; supplies</option><option>Payroll</option><option>Utilities</option><option>Others</option></select></div>
+          <div class="field full"><label for="expenseDescription">Description</label><input id="expenseDescription" placeholder="e.g. weekly detergent restock" required></div>
+          <div class="field"><label for="expenseAmount">Amount (₱)</label><input id="expenseAmount" type="number" min="0" step="0.01" required></div>
+        </div>
+        <div class="form-actions"><button type="button" class="secondary" id="cancelExpense">Cancel</button><button class="primary" type="submit">Save expense</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="detail-popover hidden" id="detailPopover" aria-hidden="true">
+    <div class="detail-box">
+      <div class="modal-top">
+        <div><span class="eyebrow" id="detailType">Record details</span><h3 id="detailTitle">Daily sale</h3></div>
+        <button type="button" class="icon-close" id="closeDetail" aria-label="Close">×</button>
+      </div>
+      <div class="detail-grid" id="detailGrid"></div>
+    </div>
+  </div>
+
+  <script>
+  const KEY='freshfold-simple-pos-v4';
+  const prototype=[
+  {id:'s1',type:'sale',date:'2026-09-21',amount:2480},
+  {id:'s2',type:'sale',date:'2026-09-22',amount:3120},
+  {id:'s3',type:'sale',date:'2026-09-23',amount:2760},
+  {id:'s4',type:'sale',date:'2026-09-24',amount:3540},
+  {id:'s5',type:'sale',date:'2026-09-25',amount:2980},
+  {id:'s6',type:'sale',date:'2026-09-26',amount:2210},
+  {id:'s7',type:'sale',date:'2026-09-13',amount:1860},
+  {id:'s8',type:'sale',date:'2026-09-14',amount:2040},
+  {id:'e1',type:'expense',date:'2026-09-22',category:'Detergent & supplies',description:'Weekly detergent restock',amount:650},
+  {id:'e2',type:'expense',date:'2026-09-24',category:'Utilities',description:'Electricity bill',amount:1180},
+  {id:'e3',type:'expense',date:'2026-09-25',category:'Others',description:'Small maintenance item',amount:240},
+  {id:'e4',type:'expense',date:'2026-09-26',category:'Payroll',description:'Part-time staff allowance',amount:520}
+  ];
+  const today=new Date();
+  let data=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(!Array.isArray(data)){data=structuredClone(prototype);save();}
+  function $(id){return document.getElementById(id)}
+  function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+  function money(n){return new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(Number(n)||0)}
+  function dateObj(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+  function dateISO(d){const x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)}
+  function startWeek(d){const x=new Date(d);const day=x.getDay();x.setDate(x.getDate()-(day===0?6:day-1));x.setHours(0,0,0,0);return x}
+  function endWeek(d){const x=startWeek(d);x.setDate(x.getDate()+6);return x}
+  function sameMonth(s,d){const x=dateObj(s);return x.getFullYear()===d.getFullYear()&&x.getMonth()===d.getMonth()}
+  function inFilter(date,period,reference){const d=dateObj(date),now=new Date();if(period==='all')return true;const ref=reference?dateObj(reference):now;if(period==='week'){const a=startWeek(ref),b=endWeek(ref);return d>=a&&d<=b}if(period==='month')return sameMonth(date,ref);return true}
+  function total(type,list=data){return list.filter(x=>x.type===type).reduce((s,x)=>s+Number(x.amount||0),0)}
+  function incomeRows(){return data.filter(x=>x.type==='sale').sort((a,b)=>b.date.localeCompare(a.date))}
+  function expenseRows(){return data.filter(x=>x.type==='expense').sort((a,b)=>b.date.localeCompare(a.date))}
+  function fillDateDefaults(){const t=dateISO(today);$('saleDate').value=t;$('expenseDate').value=t;$('salesMonth').value=t;$('dashMonth').value=t}
+  function openPopover(el){el.classList.remove('hidden');el.setAttribute('aria-hidden','false');}
+  function closePopover(el){el.classList.add('hidden');el.setAttribute('aria-hidden','true');}
+  function openSale(){closeDetail();openPopover($('saleModal'));fillDateDefaults();$('saleAmount').focus();}
+  function closeSale(){closePopover($('saleModal'));}
+  function openExpense(){closeDetail();openPopover($('expenseModal'));fillDateDefaults();$('expenseDescription').focus();}
+  function closeExpense(){closePopover($('expenseModal'));}
+  function openDetail(id,anchor){const item=data.find(x=>x.id===id);if(!item)return;const box=$('detailPopover'),grid=$('detailGrid');
+  $('detailType').textContent=item.type==='sale'?'Sales record':'Expense record';$('detailTitle').textContent=item.type==='sale'?'Daily sale':'Business expense';
+  const fields=item.type==='sale'?[['Date',item.date],['Record','Daily sales total'],['Amount',money(item.amount)]]:[['Date',item.date],['Category',item.category],['Description',item.description],['Amount',money(item.amount)]];
+  grid.innerHTML=fields.map(([k,v])=>`<div class="detail-item"><span>${k}</span><strong>${v}</strong></div>`).join('');
+  openPopover(box);
+  const rect=(anchor||document.body).getBoundingClientRect();const gap=10;let left=Math.min(Math.max(16,rect.left),Math.max(16,window.innerWidth-356));let top=rect.bottom+gap;
+  if(top+230>window.innerHeight)top=Math.max(16,rect.top-240-gap);box.style.left=`${left}px`;box.style.top=`${top}px`;
+  }
+  function setView(view){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==view));
+  const meta={dashboard:['Dashboard','Income, expenses and profit at a glance.'],sales:['Total Sales','Enter one total sales amount per day.'],expenses:['Expenses','Track operating expenses separately.']}[view];$('pageTitle').textContent=meta[0];$('pageSubtitle').textContent=meta[1];
+  renderAll(); }
+  function renderDashboard(){
+  const sales=incomeRows();
+  $('dashIncome').textContent=money(total('sale'));$('dashExpense').textContent=money(total('expense'));$('dashProfit').textContent=money(total('sale')-total('expense'));$('dashDays').textContent=new Set(sales.map(x=>x.date)).size;
+  const byDay={};sales.forEach(x=>byDay[x.date]=(byDay[x.date]||0)+Number(x.amount));const best=Object.entries(byDay).sort((a,b)=>b[1]-a[1])[0];$('dashBestDay').textContent=best?`Busiest: ${best[0]} • ${money(best[1])}`:'No sales yet';
+  const type=$('dashType').value,period=$('dashPeriod').value,reference=$('dashMonth').value;
+  const rows=data.filter(x=>(type==='all'||(type==='sale'&&x.type==='sale')||(type==='expense'&&x.type==='expense'))&&inFilter(x.date,period,reference)).sort((a,b)=>b.date.localeCompare(a.date));
+  const body=$('dashTable');body.innerHTML=rows.length?rows.map(x=>`<tr class="record-row" data-detail="${x.id}" tabindex="0"><td>${x.date}</td><td><span class="pill ${x.type==='expense'?'red':'green'}">${x.type==='sale'?'Daily sale':'Expense'}</span></td><td>${x.type==='sale'?'Total daily sales':`${x.category} — ${x.description}`}</td><td>${money(x.amount)}</td><td><button class="delete" data-delete="${x.id}">Remove</button></td></tr>`).join(''):`<tr><td colspan="5" class="empty">No records match this filter.</td></tr>`;
+  drawChart($('dashboardChart'),buildSeries(rows));
+  }
+  function buildSeries(rows){const dates=[...new Set(rows.map(x=>x.date))].sort();if(!dates.length)return{labels:[],income:[],expense:[],profit:[]};const map={};dates.forEach(d=>map[d]={income:0,expense:0});rows.forEach(x=>map[x.date][x.type==='sale'?'income':'expense']+=Number(x.amount));return{labels:dates,income:dates.map(d=>map[d].income),expense:dates.map(d=>map[d].expense),profit:dates.map(d=>map[d].income-map[d].expense)}}
+  function renderSales(){
+  const period=$('salesPeriod').value,reference=$('salesMonth').value||dateISO(today);const rows=incomeRows().filter(x=>inFilter(x.date,period,reference));
+  const body=$('salesTable');body.innerHTML=rows.length?rows.map(x=>`<tr class="record-row" data-detail="${x.id}" tabindex="0"><td>${x.date}</td><td>${money(x.amount)}</td><td><button class="delete" data-delete="${x.id}">Remove</button></td></tr>`).join(''):`<tr><td colspan="3" class="empty">No daily sales match this filter.</td></tr>`;
+  const weekly=incomeRows().filter(x=>inFilter(x.date,'week',reference)).reduce((s,x)=>s+Number(x.amount),0);const monthly=incomeRows().filter(x=>inFilter(x.date,'month',reference)).reduce((s,x)=>s+Number(x.amount),0);
+  $('weeklyTotal').textContent=money(weekly);$('monthlyTotal').textContent=money(monthly);let label='All dates';if(period==='week')label=`Week of ${reference}`;if(period==='month'){const [y,m]=reference.split('-').map(Number);label=new Date(y,m-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'});} $('selectedPeriodLabel').textContent=label;$('salesPeriodTotal').value=money(rows.reduce((s,x)=>s+Number(x.amount),0));drawChart($('salesChart'),buildSeries(rows));
+  }
+  function renderExpenses(){const rows=expenseRows();$('expenseCount').textContent=rows.length;$('expenseTotal').textContent=money(total('expense'));$('expenseTable').innerHTML=rows.length?rows.map(x=>`<tr class="record-row" data-detail="${x.id}" tabindex="0"><td>${x.date}</td><td><span class="pill red">${x.category}</span></td><td>${x.description}</td><td>${money(x.amount)}</td><td><button class="delete" data-delete="${x.id}">Remove</button></td></tr>`).join(''):`<tr><td colspan="5" class="empty">No expenses recorded yet.</td></tr>`}
+  function drawChart(canvas,s){
+    const ctx=canvas.getContext('2d');
+    const rect=canvas.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    canvas.width=Math.max(300,rect.width*dpr);
+    canvas.height=Math.max(240,rect.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const w=rect.width,h=rect.height;
+    ctx.clearRect(0,0,w,h);
+    if(!s.labels.length){ctx.fillStyle='#6c8092';ctx.font='12px system-ui';ctx.fillText('No data for this period.',18,30);return;}
+
+    const pad={l:46,r:18,t:24,b:42};
+    const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+
+    // Add headroom above and below the data so lines/markers never touch the chart boundary.
+    const rawMax=Math.max(0,...s.income,...s.expense,...s.profit);
+    const rawMin=Math.min(0,...s.income,...s.expense,...s.profit);
+    const range=Math.max(1,rawMax-rawMin);
+    const chartMin=rawMin-range*0.08;
+    const chartMax=rawMax+range*0.08;
+    const chartRange=chartMax-chartMin;
+
+    ctx.font='10px system-ui';
+    ctx.textAlign='right';
+    ctx.textBaseline='middle';
+    ctx.strokeStyle='#e8eff5';
+    ctx.fillStyle='#6c8092';
+    for(let i=0;i<=4;i++){
+      const val=chartMin+chartRange*i/4;
+      const y=pad.t+ch-((val-chartMin)/chartRange)*ch;
+      ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+      ctx.fillText(money(val).replace('PHP','₱'),pad.l-7,y);
+    }
+
+    const colors={income:'#1f6feb',expense:'#d94b59',profit:'#1fa463'};
+    const xs=s.labels.length===1?[pad.l+cw/2]:s.labels.map((_,i)=>pad.l+(cw*i/(s.labels.length-1)));
+
+    ['income','expense','profit'].forEach(key=>{
+      ctx.strokeStyle=colors[key];ctx.lineWidth=2.5;ctx.beginPath();
+      s[key].forEach((value,i)=>{
+        const x=xs[i];
+        const y=pad.t+ch-((value-chartMin)/chartRange)*ch;
+        if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+
+      s[key].forEach((value,i)=>{
+        const x=xs[i];
+        const y=pad.t+ch-((value-chartMin)/chartRange)*ch;
+        ctx.fillStyle=colors[key];ctx.beginPath();ctx.arc(x,y,3.2,0,Math.PI*2);ctx.fill();
+      });
+    });
+
+    ctx.fillStyle='#6c8092';ctx.textAlign='center';ctx.textBaseline='top';
+    const step=Math.max(1,Math.ceil(s.labels.length/8));
+    s.labels.forEach((label,i)=>{if(i%step===0||i===s.labels.length-1)ctx.fillText(label.slice(5),xs[i],h-pad.b+12);});
+  }
+  function renderAll(){renderDashboard();renderSales();renderExpenses()}
+  function addSale(e){e.preventDefault();const date=$('saleDate').value,amount=Number($('saleAmount').value);if(!date||!(amount>0))return;const existing=data.find(x=>x.type==='sale'&&x.date===date);if(existing)existing.amount=amount;else data.push({id:'s'+Date.now(),type:'sale',date,amount});save();closeSale();$('saleForm').reset();fillDateDefaults();renderAll();}
+  function addExpense(e){e.preventDefault();const date=$('expenseDate').value,category=$('expenseCategory').value,description=$('expenseDescription').value.trim(),amount=Number($('expenseAmount').value);if(!date||!description||!(amount>0))return;data.push({id:'e'+Date.now(),type:'expense',date,category,description,amount});save();closeExpense();$('expenseForm').reset();fillDateDefaults();renderAll();}
+  function remove(id){data=data.filter(x=>x.id!==id);save();closePopover($('detailPopover'));renderAll()}
+
+  document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  $('dashboardAdd').onclick=openSale;$('salesAdd').onclick=openSale;$('dashboardExpenseAdd').onclick=openExpense;$('expensePageAdd').onclick=openExpense;$('cancelSale').onclick=closeSale;$('closeSale').onclick=closeSale;$('cancelExpense').onclick=closeExpense;$('closeExpense').onclick=closeExpense;$('closeDetail').onclick=()=>closePopover($('detailPopover'));
+  $('saleForm').addEventListener('submit',addSale);$('expenseForm').addEventListener('submit',addExpense);
+  $('dashType').addEventListener('change',renderDashboard);$('dashPeriod').addEventListener('change',renderDashboard);$('dashMonth').addEventListener('change',renderDashboard);
+  $('salesPeriod').addEventListener('change',renderSales);$('salesMonth').addEventListener('change',renderSales);
+  document.addEventListener('click',e=>{const del=e.target.closest('[data-delete]');if(del){e.stopPropagation();remove(del.dataset.delete);return;}const row=e.target.closest('[data-detail]');if(row){openDetail(row.dataset.detail,row);}});
+  document.addEventListener('mouseover',e=>{const row=e.target.closest('[data-detail]');if(row)row.classList.add('hovered')});document.addEventListener('mouseout',e=>{const row=e.target.closest('[data-detail]');if(row)row.classList.remove('hovered')});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSale();closeExpense();closePopover($('detailPopover'));}if(e.key==='Enter'&&document.activeElement?.matches('[data-detail]'))openDetail(document.activeElement.dataset.detail,document.activeElement)});
+  window.addEventListener('resize',()=>{renderDashboard();renderSales()});fillDateDefaults();renderAll();
+
+  </script>
+  </body>
+</html>
