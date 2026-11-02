@@ -1,0 +1,2506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bubble Drop N Go Laundry POS</title>
+<link rel="stylesheet" href="/css/style.css">
+
+<style>
+/* Final layout safeguards for the dashboard, income and expenses views. */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;min-height:100%;overflow-x:hidden}
+.app{display:flex;width:100%;min-height:100vh;align-items:stretch}
+.sidebar{flex:0 0 250px;width:250px;min-width:250px;position:sticky;top:0;height:100vh;box-sizing:border-box}
+.main{flex:1 1 auto;width:calc(100% - 250px);min-width:0;min-height:100vh;padding:28px;box-sizing:border-box;overflow-x:hidden}
+.main>.view{position:static;width:100%;max-width:none;margin:0;transform:none}
+.view.hidden{display:none!important}
+.main .card,.main .filterbar,.main .table-wrap{width:100%;max-width:100%;box-sizing:border-box}
+.main .filterbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto}
+.main .table-wrap{overflow-x:auto;overflow-y:hidden}
+.main .table{min-width:650px}
+@media(max-width:1050px){.main{width:calc(100% - 250px)}.main .filterbar{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.app{display:block}.sidebar{width:100%;min-width:0;height:auto;position:relative}.main{width:100%;min-height:0;margin:0;padding:16px}.main>.view{width:100%}.main .filterbar{grid-template-columns:1fr}}
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+  <div class="brand">
+    <div class="brand-mark">Image</div>
+    <div>
+      <h1>Bubble Drop N Go Laundry</h1>
+      <span>Simple daily POS</span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="active" data-view="dashboard">Dashboard</button>
+    <button data-view="sales">Sales</button>
+    <button data-view="expenses">Expenses</button>
+  </div>
+
+  <div class="sidebar-card">
+    <strong>Owner workflow</strong>
+    <p>
+      Record daily income and operating expenses.
+      Every new entry automatically updates the dashboard,
+      reports and charts.
+    </p>
+  </div>
+
+</aside>
+
+<main class="main">
+
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Laundry service POS</div>
+      <h2 id="pageTitle">Dashboard</h2>
+      <p id="pageSubtitle">Income, expenses and profit at a glance.</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+
+  <section id="dashboard" class="view">
+
+    <div class="cards">
+
+      <div class="card metric">
+        <small>Total income</small>
+        <div class="value" id="dashIncome">₱0.00</div>
+        <div class="sub">All recorded sales</div>
+      </div>
+
+      <div class="card metric">
+        <small>Total expenses</small>
+        <div class="value" id="dashExpense">₱0.00</div>
+        <div class="sub">All recorded expenses</div>
+      </div>
+
+      <div class="card metric">
+        <small>Net profit</small>
+        <div class="value" id="dashProfit">₱0.00</div>
+        <div class="sub">Income less expenses</div>
+      </div>
+
+      <div class="card metric">
+        <small>Active sales days</small>
+        <div class="value" id="dashDays">0</div>
+        <div class="sub" id="dashBestDay">No sales yet</div>
+      </div>
+
+    </div>
+
+    <div class="card chart-card">
+
+      <div class="section-head">
+
+        <div>
+          <h3>Income, expenses & profit</h3>
+          <p>Daily trend from recorded business data.</p>
+        </div>
+
+        <div class="legend">
+          <span class="income">Income</span>
+          <span class="expense">Expenses</span>
+          <span class="profit">Profit</span>
+        </div>
+
+      </div>
+
+      <div class="chart">
+        <canvas id="dashboardChart"></canvas>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-head">
+
+        <div>
+          <h3>Business records</h3>
+          <p>Hover or click a row to preview the record details.</p>
+        </div>
+
+        <div class="section-actions">
+          <button class="secondary" id="dashboardExpenseAdd">
+            + Add expense
+          </button>
+
+          <button class="primary" id="dashboardAdd">
+            + Add income
+          </button>
+        </div>
+
+      </div>
+
+      <div class="filterbar">
+
+        <div class="field">
+          <label for="dashType">Type</label>
+          <select id="dashType">
+            <option value="all">All records</option>
+            <option value="sale">Income only</option>
+            <option value="expense">Expenses only</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="dashPeriod">Date filter</label>
+          <select id="dashPeriod">
+            <option value="all">All dates</option>
+            <option value="week">Week of selected date</option>
+            <option value="month">Month of selected date</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="dashMonth">Select a date</label>
+          <input id="dashMonth" type="date">
+        </div>
+
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Record</th>
+              <th>Details</th>
+              <th>Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="dashTable"></tbody>
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SALES -->
+
+  <section id="sales" class="view hidden">
+
+    <div class="card chart-card">
+
+      <div class="section-head">
+
+        <div>
+          <h3>Daily sales income</h3>
+          <p>Each row is the total income collected for one day.</p>
+        </div>
+
+      </div>
+
+      <div class="filterbar">
+
+        <div class="field">
+          <label for="salesPeriod">Income period</label>
+
+          <select id="salesPeriod">
+            <option value="all">All dates</option>
+            <option value="week">Week of selected date</option>
+            <option value="month">Month of selected date</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="salesMonth">Select a date</label>
+          <input id="salesMonth" type="date">
+        </div>
+
+        <div class="field">
+          <label>Period total</label>
+          <input id="salesPeriodTotal" value="₱0.00" readonly>
+        </div>
+
+      </div>
+
+      <div class="summary-bar">
+
+        <div>
+          <span>Weekly total</span>
+          <strong id="weeklyTotal">₱0.00</strong>
+        </div>
+
+        <div>
+          <span>Monthly total</span>
+          <strong id="monthlyTotal">₱0.00</strong>
+        </div>
+
+        <div>
+          <span>Selected period</span>
+          <strong id="selectedPeriodLabel">All dates</strong>
+        </div>
+
+      </div>
+
+      <div class="chart">
+        <canvas id="salesChart"></canvas>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-head">
+
+        <div>
+          <h3>Daily income table</h3>
+          <p>Most recent daily totals appear first.</p>
+        </div>
+
+        <button class="primary" id="salesAdd">
+          + Add income
+        </button>
+
+      </div>
+
+      <div class="table-wrap">
+
+        <table class="table">
+
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Daily income</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody id="salesTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- EXPENSES -->
+
+  <section id="expenses" class="view hidden">
+
+    <div class="card expense-toolbar">
+
+      <div class="section-head">
+
+        <div>
+          <h3>Expense history</h3>
+          <p>Add and manage operating expenses.</p>
+        </div>
+
+        <button class="primary" id="expensePageAdd">
+          + Add expense
+        </button>
+
+      </div>
+
+      <div class="expense-inline-summary">
+
+        <span>
+          Entries:
+          <strong id="expenseCount">0</strong>
+        </span>
+
+        <span>
+          Total expenses:
+          <strong id="expenseTotal">₱0.00</strong>
+        </span>
+
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-head">
+
+        <div>
+          <h3>Expense records</h3>
+          <p>Hover or click a row to preview the expense details.</p>
+        </div>
+
+      </div>
+
+      <div class="table-wrap">
+
+        <table class="table">
+
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody id="expenseTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <div class="footer">
+    Data is stored in this browser. New entries remain after refreshing the page.
+  </div>
+
+</main>
+
+</div>
+
+
+<!-- INCOME ENTRY PANEL -->
+
+<div class="entry-overlay hidden" id="incomeOverlay">
+
+  <div class="entry-panel">
+
+    <div class="entry-header">
+
+      <div>
+        <div class="eyebrow">Income entry</div>
+        <h3>Add daily income</h3>
+        <p>
+          Record the total amount collected from laundry services
+          for a specific day.
+        </p>
+      </div>
+
+      <button class="icon-close" id="closeIncome">×</button>
+
+    </div>
+
+    <form class="entry-form" id="incomeForm">
+
+      <div class="field">
+
+        <label for="incomeDate">
+          Income date
+        </label>
+
+        <input
+          type="date"
+          id="incomeDate"
+          required
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="incomeAmount">
+          Total income
+        </label>
+
+        <input
+          type="number"
+          id="incomeAmount"
+          class="entry-amount"
+          min="0.01"
+          step="0.01"
+          placeholder="0.00"
+          required
+        >
+
+      </div>
+
+      <div class="entry-hint">
+        <strong>How it works:</strong>
+        Enter the total sales collected for the day.
+        If that date already has an income record, saving will
+        update the existing daily total.
+      </div>
+
+      <div class="entry-actions">
+
+        <button
+          type="button"
+          class="secondary"
+          id="cancelIncome"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="primary"
+        >
+          Save income
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- EXPENSE ENTRY PANEL -->
+
+<div class="entry-overlay hidden" id="expenseOverlay">
+
+  <div class="entry-panel">
+
+    <div class="entry-header">
+
+      <div>
+        <div class="eyebrow">Expense entry</div>
+        <h3>Add expense</h3>
+        <p>
+          Record an operating expense such as detergent,
+          payroll, utilities or maintenance.
+        </p>
+      </div>
+
+      <button class="icon-close" id="closeExpense">×</button>
+
+    </div>
+
+    <form class="entry-form" id="expenseForm">
+
+      <div class="field">
+
+        <label for="expenseDate">
+          Expense date
+        </label>
+
+        <input
+          type="date"
+          id="expenseDate"
+          required
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="expenseCategory">
+          Category
+        </label>
+
+        <select id="expenseCategory">
+
+          <option>Detergent &amp; supplies</option>
+          <option>Payroll</option>
+          <option>Utilities</option>
+          <option>Others</option>
+
+        </select>
+
+      </div>
+
+      <div class="field">
+
+        <label for="expenseDescription">
+          Description
+        </label>
+
+        <input
+          type="text"
+          id="expenseDescription"
+          placeholder="e.g. Weekly detergent restock"
+          required
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="expenseAmount">
+          Expense amount
+        </label>
+
+        <input
+          type="number"
+          id="expenseAmount"
+          class="entry-amount"
+          min="0.01"
+          step="0.01"
+          placeholder="0.00"
+          required
+        >
+
+      </div>
+
+      <div class="entry-actions">
+
+        <button
+          type="button"
+          class="secondary"
+          id="cancelExpense"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="primary"
+        >
+          Save expense
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- DETAIL POPUP -->
+
+<div class="detail-popover hidden" id="detailPopover">
+
+  <div class="detail-box">
+
+    <div class="entry-header">
+
+      <div>
+        <div class="eyebrow" id="detailType">
+          Record details
+        </div>
+
+        <h3 id="detailTitle">
+          Record
+        </h3>
+      </div>
+
+      <button class="icon-close" id="closeDetail">
+        ×
+      </button>
+
+    </div>
+
+    <div class="detail-grid" id="detailGrid"></div>
+
+  </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+const STORAGE_KEY = "freshfold-simple-pos-v5";
+
+
+/* -----------------------------
+   SAMPLE DATA
+----------------------------- */
+/* prototype = [
+
+  {
+    id:"s1",
+    type:"sale",
+    date:"2026-09-21",
+    amount:2480
+  },
+
+  {
+    id:"s2",
+    type:"sale",
+    date:"2026-09-22",
+    amount:3120
+  },
+
+  {
+    id:"s3",
+    type:"sale",
+    date:"2026-09-23",
+    amount:2760
+  },
+
+  {
+    id:"s4",
+    type:"sale",
+    date:"2026-09-24",
+    amount:3540
+  },
+
+  {
+    id:"s5",
+    type:"sale",
+    date:"2026-09-25",
+    amount:2980
+  },
+
+  {
+    id:"s6",
+    type:"sale",
+    date:"2026-09-26",
+    amount:2210
+  },
+
+  {
+    id:"s7",
+    type:"sale",
+    date:"2026-09-13",
+    amount:1860
+  },
+
+  {
+    id:"s8",
+    type:"sale",
+    date:"2026-09-14",
+    amount:2040
+  },
+
+  {
+    id:"e1",
+    type:"expense",
+    date:"2026-09-22",
+    category:"Detergent & supplies",
+    description:"Weekly detergent restock",
+    amount:650
+  },
+
+  {
+    id:"e2",
+    type:"expense",
+    date:"2026-09-24",
+    category:"Utilities",
+    description:"Electricity bill",
+    amount:1180
+  },
+
+  {
+    id:"e3",
+    type:"expense",
+    date:"2026-09-25",
+    category:"Others",
+    description:"Small maintenance item",
+    amount:240
+  },
+
+  {
+    id:"e4",
+    type:"expense",
+    date:"2026-09-26",
+    category:"Payroll",
+    description:"Part-time staff allowance",
+    amount:520
+  }
+
+];
+
+
+/* -----------------------------
+   STATE
+----------------------------- */
+
+let data = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) || "null"
+);
+
+if(!Array.isArray(data)){
+  data = structuredClone(prototype);
+  save();
+}
+
+
+/* -----------------------------
+   HELPERS
+----------------------------- */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+
+function save(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+function money(value){
+
+  return new Intl.NumberFormat(
+    "en-PH",
+    {
+      style:"currency",
+      currency:"PHP"
+    }
+  ).format(Number(value) || 0);
+
+}
+
+
+function todayISO(){
+
+  const d = new Date();
+
+  d.setMinutes(
+    d.getMinutes() - d.getTimezoneOffset()
+  );
+
+  return d.toISOString().slice(0,10);
+
+}
+
+
+function dateObj(value){
+
+  const [
+    year,
+    month,
+    day
+  ] = value.split("-").map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day
+  );
+
+}
+
+
+function startWeek(date){
+
+  const d = new Date(date);
+
+  const day = d.getDay();
+
+  d.setDate(
+    d.getDate() -
+    (day === 0 ? 6 : day - 1)
+  );
+
+  d.setHours(0,0,0,0);
+
+  return d;
+
+}
+
+
+function endWeek(date){
+
+  const d = startWeek(date);
+
+  d.setDate(
+    d.getDate() + 6
+  );
+
+  return d;
+
+}
+
+
+function sameMonth(date, reference){
+
+  const d = dateObj(date);
+
+  return (
+    d.getFullYear() === reference.getFullYear() &&
+    d.getMonth() === reference.getMonth()
+  );
+
+}
+
+
+function inFilter(
+  date,
+  period,
+  reference
+){
+
+  if(period === "all"){
+    return true;
+  }
+
+  const d = dateObj(date);
+
+  const ref = reference
+    ? dateObj(reference)
+    : new Date();
+
+  if(period === "week"){
+
+    const a = startWeek(ref);
+    const b = endWeek(ref);
+
+    return d >= a && d <= b;
+
+  }
+
+  if(period === "month"){
+
+    return sameMonth(date, ref);
+
+  }
+
+  return true;
+
+}
+
+
+function total(type){
+
+  return data
+    .filter(x => x.type === type)
+    .reduce(
+      (sum,x) => sum + Number(x.amount || 0),
+      0
+    );
+
+}
+
+
+function incomeRows(){
+
+  return data
+    .filter(x => x.type === "sale")
+    .sort(
+      (a,b) =>
+        b.date.localeCompare(a.date)
+    );
+
+}
+
+
+function expenseRows(){
+
+  return data
+    .filter(x => x.type === "expense")
+    .sort(
+      (a,b) =>
+        b.date.localeCompare(a.date)
+    );
+
+}
+
+
+/* -----------------------------
+   TOAST
+----------------------------- */
+
+let toastTimer;
+
+function showToast(message){
+
+  const toast = $("toast");
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(
+    () => toast.classList.remove("show"),
+    2400
+  );
+
+}
+
+
+/* -----------------------------
+   ENTRY PANELS
+----------------------------- */
+
+function openIncome(){
+
+  closeExpense();
+  closeDetail();
+
+  $("incomeOverlay")
+    .classList.remove("hidden");
+
+  $("incomeDate").value = todayISO();
+
+  $("incomeAmount").value = "";
+
+  setTimeout(
+    () => $("incomeAmount").focus(),
+    50
+  );
+
+}
+
+
+function closeIncome(){
+
+  $("incomeOverlay")
+    .classList.add("hidden");
+
+}
+
+
+function openExpense(){
+
+  closeIncome();
+  closeDetail();
+
+  $("expenseOverlay")
+    .classList.remove("hidden");
+
+  $("expenseDate").value = todayISO();
+
+  $("expenseDescription").value = "";
+
+  $("expenseAmount").value = "";
+
+  setTimeout(
+    () => $("expenseDescription").focus(),
+    50
+  );
+
+}
+
+
+function closeExpense(){
+
+  $("expenseOverlay")
+    .classList.add("hidden");
+
+}
+
+
+function closeDetail(){
+
+  $("detailPopover")
+    .classList.add("hidden");
+
+}
+
+
+/* -----------------------------
+   ADD INCOME
+----------------------------- */
+
+function addIncome(event){
+
+  event.preventDefault();
+
+  const date =
+    $("incomeDate").value;
+
+  const amount =
+    Number($("incomeAmount").value);
+
+  if(!date){
+
+    showToast("Please choose an income date.");
+
+    return;
+
+  }
+
+  if(!(amount > 0)){
+
+    showToast("Enter an income amount greater than zero.");
+
+    $("incomeAmount").focus();
+
+    return;
+
+  }
+
+
+  const existing =
+    data.find(
+      x =>
+        x.type === "sale" &&
+        x.date === date
+    );
+
+
+  if(existing){
+
+    existing.amount = amount;
+
+    showToast(
+      `Income for ${date} updated to ${money(amount)}.`
+    );
+
+  }else{
+
+    data.push({
+
+      id:
+        "s" +
+        Date.now() +
+        Math.random()
+          .toString(36)
+          .slice(2,7),
+
+      type:"sale",
+
+      date,
+
+      amount
+
+    });
+
+    showToast(
+      `Income of ${money(amount)} added.`
+    );
+
+  }
+
+
+  save();
+
+  closeIncome();
+
+  renderAll();
+
+}
+
+
+/* -----------------------------
+   ADD EXPENSE
+----------------------------- */
+
+function addExpense(event){
+
+  event.preventDefault();
+
+  const date =
+    $("expenseDate").value;
+
+  const category =
+    $("expenseCategory").value;
+
+  const description =
+    $("expenseDescription")
+      .value
+      .trim();
+
+  const amount =
+    Number($("expenseAmount").value);
+
+
+  if(!date){
+
+    showToast("Please choose an expense date.");
+
+    return;
+
+  }
+
+
+  if(!description){
+
+    showToast("Please enter an expense description.");
+
+    $("expenseDescription").focus();
+
+    return;
+
+  }
+
+
+  if(!(amount > 0)){
+
+    showToast(
+      "Enter an expense amount greater than zero."
+    );
+
+    $("expenseAmount").focus();
+
+    return;
+
+  }
+
+
+  data.push({
+
+    id:
+      "e" +
+      Date.now() +
+      Math.random()
+        .toString(36)
+        .slice(2,7),
+
+    type:"expense",
+
+    date,
+
+    category,
+
+    description,
+
+    amount
+
+  });
+
+
+  save();
+
+  closeExpense();
+
+  renderAll();
+
+  showToast(
+    `Expense of ${money(amount)} added.`
+  );
+
+}
+
+
+/* -----------------------------
+   REMOVE
+----------------------------- */
+
+function removeRecord(id){
+
+  const record =
+    data.find(x => x.id === id);
+
+  if(!record){
+    return;
+  }
+
+
+  const confirmed =
+    confirm(
+      `Remove this ${record.type === "sale" ? "income" : "expense"} record?`
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+
+  data =
+    data.filter(
+      x => x.id !== id
+    );
+
+  save();
+
+  closeDetail();
+
+  renderAll();
+
+  showToast("Record removed.");
+
+}
+
+
+/* -----------------------------
+   DETAIL POPUP
+----------------------------- */
+
+function openDetail(id,row){
+
+  const item =
+    data.find(x => x.id === id);
+
+  if(!item){
+    return;
+  }
+
+
+  $("detailType").textContent =
+    item.type === "sale"
+      ? "Income record"
+      : "Expense record";
+
+
+  $("detailTitle").textContent =
+    item.type === "sale"
+      ? "Daily income"
+      : "Business expense";
+
+
+  let fields;
+
+
+  if(item.type === "sale"){
+
+    fields = [
+
+      ["Date",item.date],
+
+      ["Record","Daily income"],
+
+      ["Amount",money(item.amount)]
+
+    ];
+
+  }else{
+
+    fields = [
+
+      ["Date",item.date],
+
+      ["Category",item.category],
+
+      ["Description",item.description],
+
+      ["Amount",money(item.amount)]
+
+    ];
+
+  }
+
+
+  $("detailGrid").innerHTML =
+    fields
+      .map(
+        ([label,value]) => `
+          <div class="detail-item">
+            <span>${label}</span>
+            <strong>${value}</strong>
+          </div>
+        `
+      )
+      .join("");
+
+
+  const popover =
+    $("detailPopover");
+
+  popover.classList.remove("hidden");
+
+
+  const rect =
+    row.getBoundingClientRect();
+
+
+  let left =
+    Math.min(
+      Math.max(16,rect.left),
+      window.innerWidth - 366
+    );
+
+
+  let top =
+    rect.bottom + 10;
+
+
+  if(
+    top + 260 >
+    window.innerHeight
+  ){
+
+    top =
+      Math.max(
+        16,
+        rect.top - 270
+      );
+
+  }
+
+
+  popover.style.left =
+    `${left}px`;
+
+  popover.style.top =
+    `${top}px`;
+
+}
+
+
+/* -----------------------------
+   NAVIGATION
+----------------------------- */
+
+function setView(view){
+
+  document
+    .querySelectorAll(".nav button")
+    .forEach(
+      button =>
+        button.classList.toggle(
+          "active",
+          button.dataset.view === view
+        )
+    );
+
+
+  document
+    .querySelectorAll(".view")
+    .forEach(
+      section =>
+        section.classList.toggle(
+          "hidden",
+          section.id !== view
+        )
+    );
+
+
+  const meta = {
+
+    dashboard:[
+      "Dashboard",
+      "Income, expenses and profit at a glance."
+    ],
+
+    sales:[
+      "Total Sales",
+      "Enter one total income amount per day."
+    ],
+
+    expenses:[
+      "Expenses",
+      "Track operating expenses separately."
+    ]
+
+  };
+
+
+  $("pageTitle").textContent =
+    meta[view][0];
+
+  $("pageSubtitle").textContent =
+    meta[view][1];
+
+
+  renderAll();
+
+}
+
+
+/* -----------------------------
+   DASHBOARD
+----------------------------- */
+
+function renderDashboard(){
+
+  const sales =
+    incomeRows();
+
+
+  const income =
+    total("sale");
+
+  const expenses =
+    total("expense");
+
+
+  $("dashIncome").textContent =
+    money(income);
+
+  $("dashExpense").textContent =
+    money(expenses);
+
+  $("dashProfit").textContent =
+    money(
+      income - expenses
+    );
+
+
+  $("dashDays").textContent =
+    new Set(
+      sales.map(x => x.date)
+    ).size;
+
+
+  const byDay = {};
+
+
+  sales.forEach(
+    x => {
+
+      byDay[x.date] =
+        (byDay[x.date] || 0) +
+        Number(x.amount);
+
+    }
+  );
+
+
+  const best =
+    Object.entries(byDay)
+      .sort(
+        (a,b) =>
+          b[1] - a[1]
+      )[0];
+
+
+  $("dashBestDay").textContent =
+    best
+      ? `Busiest: ${best[0]} • ${money(best[1])}`
+      : "No sales yet";
+
+
+  const type =
+    $("dashType").value;
+
+  const period =
+    $("dashPeriod").value;
+
+  const reference =
+    $("dashMonth").value;
+
+
+  const rows =
+    data
+      .filter(
+        x =>
+          (
+            type === "all" ||
+            (type === "sale" &&
+             x.type === "sale") ||
+            (type === "expense" &&
+             x.type === "expense")
+          ) &&
+          inFilter(
+            x.date,
+            period,
+            reference
+          )
+      )
+      .sort(
+        (a,b) =>
+          b.date.localeCompare(a.date)
+      );
+
+
+  $("dashTable").innerHTML =
+    rows.length
+
+      ? rows.map(
+          x => `
+            <tr
+              class="record-row"
+              data-detail="${x.id}"
+              tabindex="0"
+            >
+
+              <td>${x.date}</td>
+
+              <td>
+                <span class="pill ${
+                  x.type === "expense"
+                    ? "red"
+                    : "green"
+                }">
+                  ${
+                    x.type === "sale"
+                      ? "Income"
+                      : "Expense"
+                  }
+                </span>
+              </td>
+
+              <td>
+                ${
+                  x.type === "sale"
+                    ? "Daily income total"
+                    : `${x.category} — ${x.description}`
+                }
+              </td>
+
+              <td>
+                ${money(x.amount)}
+              </td>
+
+              <td>
+                <button
+                  class="delete"
+                  data-delete="${x.id}"
+                >
+                  Remove
+                </button>
+              </td>
+
+            </tr>
+          `
+        ).join("")
+
+      : `
+        <tr>
+          <td
+            colspan="5"
+            class="empty"
+          >
+            No records match this filter.
+          </td>
+        </tr>
+      `;
+
+
+  drawChart(
+    $("dashboardChart"),
+    buildSeries(rows)
+  );
+
+}
+
+
+/* -----------------------------
+   SALES
+----------------------------- */
+
+function renderSales(){
+
+  const period =
+    $("salesPeriod").value;
+
+  const reference =
+    $("salesMonth").value ||
+    todayISO();
+
+
+  const rows =
+    incomeRows()
+      .filter(
+        x =>
+          inFilter(
+            x.date,
+            period,
+            reference
+          )
+      );
+
+
+  $("salesTable").innerHTML =
+    rows.length
+
+      ? rows.map(
+          x => `
+            <tr
+              class="record-row"
+              data-detail="${x.id}"
+              tabindex="0"
+            >
+
+              <td>${x.date}</td>
+
+              <td>
+                ${money(x.amount)}
+              </td>
+
+              <td>
+                <button
+                  class="delete"
+                  data-delete="${x.id}"
+                >
+                  Remove
+                </button>
+              </td>
+
+            </tr>
+          `
+        ).join("")
+
+      : `
+        <tr>
+          <td
+            colspan="3"
+            class="empty"
+          >
+            No daily income matches this filter.
+          </td>
+        </tr>
+      `;
+
+
+  const weekly =
+    incomeRows()
+      .filter(
+        x =>
+          inFilter(
+            x.date,
+            "week",
+            reference
+          )
+      )
+      .reduce(
+        (sum,x) =>
+          sum + Number(x.amount),
+        0
+      );
+
+
+  const monthly =
+    incomeRows()
+      .filter(
+        x =>
+          inFilter(
+            x.date,
+            "month",
+            reference
+          )
+      )
+      .reduce(
+        (sum,x) =>
+          sum + Number(x.amount),
+        0
+      );
+
+
+  $("weeklyTotal").textContent =
+    money(weekly);
+
+  $("monthlyTotal").textContent =
+    money(monthly);
+
+
+  let label = "All dates";
+
+
+  if(period === "week"){
+
+    label =
+      `Week of ${reference}`;
+
+  }
+
+
+  if(period === "month"){
+
+    const [
+      year,
+      month
+    ] =
+      reference
+        .split("-")
+        .map(Number);
+
+
+    label =
+      new Date(
+        year,
+        month - 1,
+        1
+      ).toLocaleDateString(
+        "en-PH",
+        {
+          month:"long",
+          year:"numeric"
+        }
+      );
+
+  }
+
+
+  $("selectedPeriodLabel").textContent =
+    label;
+
+
+  $("salesPeriodTotal").value =
+    money(
+      rows.reduce(
+        (sum,x) =>
+          sum + Number(x.amount),
+        0
+      )
+    );
+
+
+  drawChart(
+    $("salesChart"),
+    buildSeries(rows)
+  );
+
+}
+
+
+/* -----------------------------
+   EXPENSES
+----------------------------- */
+
+function renderExpenses(){
+
+  const rows =
+    expenseRows();
+
+
+  $("expenseCount").textContent =
+    rows.length;
+
+
+  $("expenseTotal").textContent =
+    money(
+      total("expense")
+    );
+
+
+  $("expenseTable").innerHTML =
+    rows.length
+
+      ? rows.map(
+          x => `
+            <tr
+              class="record-row"
+              data-detail="${x.id}"
+              tabindex="0"
+            >
+
+              <td>${x.date}</td>
+
+              <td>
+                <span class="pill red">
+                  ${x.category}
+                </span>
+              </td>
+
+              <td>${x.description}</td>
+
+              <td>${money(x.amount)}</td>
+
+              <td>
+                <button
+                  class="delete"
+                  data-delete="${x.id}"
+                >
+                  Remove
+                </button>
+              </td>
+
+            </tr>
+          `
+        ).join("")
+
+      : `
+        <tr>
+          <td
+            colspan="5"
+            class="empty"
+          >
+            No expenses recorded yet.
+          </td>
+        </tr>
+      `;
+
+}
+
+
+/* -----------------------------
+   CHART DATA
+----------------------------- */
+
+function buildSeries(rows){
+
+  const dates =
+    [
+      ...new Set(
+        rows.map(x => x.date)
+      )
+    ].sort();
+
+
+  if(!dates.length){
+
+    return {
+      labels:[],
+      income:[],
+      expense:[],
+      profit:[]
+    };
+
+  }
+
+
+  const map = {};
+
+
+  dates.forEach(
+    date => {
+
+      map[date] = {
+        income:0,
+        expense:0
+      };
+
+    }
+  );
+
+
+  rows.forEach(
+    x => {
+
+      map[x.date][
+        x.type === "sale"
+          ? "income"
+          : "expense"
+      ] += Number(x.amount);
+
+    }
+  );
+
+
+  return {
+
+    labels:dates,
+
+    income:
+      dates.map(
+        d => map[d].income
+      ),
+
+    expense:
+      dates.map(
+        d => map[d].expense
+      ),
+
+    profit:
+      dates.map(
+        d =>
+          map[d].income -
+          map[d].expense
+      )
+
+  };
+
+}
+
+
+/* -----------------------------
+   DRAW CHART
+----------------------------- */
+
+function drawChart(canvas,series){
+
+  const ctx =
+    canvas.getContext("2d");
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+
+  canvas.width =
+    Math.max(
+      300,
+      rect.width * dpr
+    );
+
+  canvas.height =
+    Math.max(
+      240,
+      rect.height * dpr
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  const w =
+    rect.width;
+
+  const h =
+    rect.height;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  if(!series.labels.length){
+
+    ctx.fillStyle =
+      "#6c8092";
+
+    ctx.font =
+      "12px system-ui";
+
+    ctx.fillText(
+      "No data for this period.",
+      18,
+      30
+    );
+
+    return;
+
+  }
+
+
+  const pad = {
+    l:46,
+    r:18,
+    t:18,
+    b:42
+  };
+
+
+  const cw =
+    w - pad.l - pad.r;
+
+  const ch =
+    h - pad.t - pad.b;
+
+
+  const max =
+    Math.max(
+      1,
+      ...series.income,
+      ...series.expense,
+      ...series.profit
+    );
+
+
+  ctx.font =
+    "10px system-ui";
+
+  ctx.textAlign =
+    "right";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.strokeStyle =
+    "#e8eff5";
+
+  ctx.fillStyle =
+    "#6c8092";
+
+
+  for(let i=0;i<=4;i++){
+
+    const value =
+      max * i / 4;
+
+    const y =
+      pad.t +
+      ch -
+      ch * i / 4;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      pad.l,
+      y
+    );
+
+    ctx.lineTo(
+      pad.l + cw,
+      y
+    );
+
+    ctx.stroke();
+
+
+    ctx.fillText(
+      money(value),
+      pad.l - 7,
+      y
+    );
+
+  }
+
+
+  const xs =
+    series.labels.length === 1
+
+      ? [pad.l + cw / 2]
+
+      : series.labels.map(
+          (_,i) =>
+            pad.l +
+            cw *
+            i /
+            (series.labels.length - 1)
+        );
+
+
+  const colors = {
+
+    income:"#1f6feb",
+
+    expense:"#d94b59",
+
+    profit:"#1fa463"
+
+  };
+
+
+  [
+    "income",
+    "expense",
+    "profit"
+  ].forEach(
+    key => {
+
+      ctx.strokeStyle =
+        colors[key];
+
+      ctx.lineWidth =
+        2.5;
+
+      ctx.beginPath();
+
+
+      series[key].forEach(
+        (value,i) => {
+
+          const x =
+            xs[i];
+
+          const y =
+            pad.t +
+            ch -
+            (value / max) *
+            ch;
+
+
+          if(i === 0){
+
+            ctx.moveTo(
+              x,
+              y
+            );
+
+          }else{
+
+            ctx.lineTo(
+              x,
+              y
+            );
+
+          }
+
+        }
+      );
+
+
+      ctx.stroke();
+
+
+      series[key].forEach(
+        (value,i) => {
+
+          const x =
+            xs[i];
+
+          const y =
+            pad.t +
+            ch -
+            (value / max) *
+            ch;
+
+
+          ctx.fillStyle =
+            colors[key];
+
+          ctx.beginPath();
+
+          ctx.arc(
+            x,
+            y,
+            3.2,
+            0,
+            Math.PI * 2
+          );
+
+          ctx.fill();
+
+        }
+      );
+
+    }
+  );
+
+
+  ctx.fillStyle =
+    "#6c8092";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "top";
+
+
+  const step =
+    Math.max(
+      1,
+      Math.ceil(
+        series.labels.length / 8
+      )
+    );
+
+
+  series.labels.forEach(
+    (label,i) => {
+
+      if(
+        i % step === 0 ||
+        i === series.labels.length - 1
+      ){
+
+        ctx.fillText(
+          label.slice(5),
+          xs[i],
+          h - pad.b + 12
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* -----------------------------
+   RENDER EVERYTHING
+----------------------------- */
+
+function renderAll(){
+
+  renderDashboard();
+
+  renderSales();
+
+  renderExpenses();
+
+}
+
+
+/* -----------------------------
+   EVENTS
+----------------------------- */
+
+document
+  .querySelectorAll(".nav button")
+  .forEach(
+    button =>
+      button.addEventListener(
+        "click",
+        () =>
+          setView(
+            button.dataset.view
+          )
+      )
+  );
+
+
+$("dashboardAdd")
+  .onclick =
+  openIncome;
+
+
+$("salesAdd")
+  .onclick =
+  openIncome;
+
+
+$("dashboardExpenseAdd")
+  .onclick =
+  openExpense;
+
+
+$("expensePageAdd")
+  .onclick =
+  openExpense;
+
+
+$("closeIncome")
+  .onclick =
+  closeIncome;
+
+
+$("cancelIncome")
+  .onclick =
+  closeIncome;
+
+
+$("closeExpense")
+  .onclick =
+  closeExpense;
+
+
+$("cancelExpense")
+  .onclick =
+  closeExpense;
+
+
+$("closeDetail")
+  .onclick =
+  closeDetail;
+
+
+$("incomeForm")
+  .addEventListener(
+    "submit",
+    addIncome
+  );
+
+
+$("expenseForm")
+  .addEventListener(
+    "submit",
+    addExpense
+  );
+
+
+$("dashType")
+  .addEventListener(
+    "change",
+    renderDashboard
+  );
+
+
+$("dashPeriod")
+  .addEventListener(
+    "change",
+    renderDashboard
+  );
+
+
+$("dashMonth")
+  .addEventListener(
+    "change",
+    renderDashboard
+  );
+
+
+$("salesPeriod")
+  .addEventListener(
+    "change",
+    renderSales
+  );
+
+
+$("salesMonth")
+  .addEventListener(
+    "change",
+    renderSales
+  );
+
+
+/* Table interaction */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const deleteButton =
+      event.target.closest(
+        "[data-delete]"
+      );
+
+
+    if(deleteButton){
+
+      event.stopPropagation();
+
+      removeRecord(
+        deleteButton.dataset.delete
+      );
+
+      return;
+
+    }
+
+
+    const row =
+      event.target.closest(
+        "[data-detail]"
+      );
+
+
+    if(row){
+
+      openDetail(
+        row.dataset.detail,
+        row
+      );
+
+    }
+
+  }
+);
+
+
+/* Hover */
+
+document.addEventListener(
+  "mouseover",
+  event => {
+
+    const row =
+      event.target.closest(
+        "[data-detail]"
+      );
+
+    if(row){
+
+      row.classList.add(
+        "hovered"
+      );
+
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "mouseout",
+  event => {
+
+    const row =
+      event.target.closest(
+        "[data-detail]"
+      );
+
+    if(row){
+
+      row.classList.remove(
+        "hovered"
+      );
+
+    }
+
+  }
+);
+
+
+/* Keyboard */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Escape"){
+
+      closeIncome();
+
+      closeExpense();
+
+      closeDetail();
+
+    }
+
+
+    if(
+      event.key === "Enter" &&
+      document.activeElement?.matches(
+        "[data-detail]"
+      )
+    ){
+
+      openDetail(
+        document.activeElement.dataset.detail,
+        document.activeElement
+      );
+
+    }
+
+  }
+);
+
+
+/* Click outside entry panel */
+
+$("incomeOverlay")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        $("incomeOverlay")
+      ){
+
+        closeIncome();
+
+      }
+
+    }
+  );
+
+
+$("expenseOverlay")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        $("expenseOverlay")
+      ){
+
+        closeExpense();
+
+      }
+
+    }
+  );
+
+
+/* Resize chart */
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    renderDashboard();
+
+    renderSales();
+
+  }
+);
+
+
+/* -----------------------------
+   INITIALIZE
+----------------------------- */
+
+const initialDate =
+  todayISO();
+
+
+$("incomeDate").value =
+  initialDate;
+
+$("expenseDate").value =
+  initialDate;
+
+$("salesMonth").value =
+  initialDate;
+
+$("dashMonth").value =
+  initialDate;
+
+
+renderAll();
+
+</script>
+
+</body>
+</html>
